@@ -7,6 +7,7 @@ const PARTNER_LINK =
   "https://portal.fortuneprime.com/getview?view=register&token=0pCE0B";
 const CONTACT_EMAIL = "rich@automateforextrading.com";
 const USDT_WALLET = "0xbb2a9a6daf3be07e7dbf211e26c8295121767543";
+const BRAND_LOGO = "/images/autom8-logo.png";
 
 const services = [
   {
@@ -15,7 +16,8 @@ const services = [
     price: "Private Access Only",
     button: "View EA Products",
     link: "/buy-forex-ea",
-    icon: "⚙️",
+    badge: "Best Seller",
+    watermark: "/images/watermarks/forex-ea.png",
   },
   {
     title: "Telegram Signals",
@@ -23,7 +25,8 @@ const services = [
     price: "Exclusive Access",
     button: "Join Signals",
     link: TELEGRAM_LINK,
-    icon: "📡",
+    badge: "Live Access",
+    watermark: "/images/watermarks/telegram-signals.png",
   },
   {
     title: "Mentoring",
@@ -31,7 +34,8 @@ const services = [
     price: "Application Required",
     button: "Apply for Mentoring",
     link: "/mentoring",
-    icon: "🎯",
+    badge: "Premium",
+    watermark: "/images/watermarks/mentoring.png",
   },
   {
     title: "Copy Trading",
@@ -39,15 +43,47 @@ const services = [
     price: "Limited Trader Slots",
     button: "Request Access",
     link: "/copy-trading",
-    icon: "📈",
+    badge: "Hot",
+    watermark: "/images/watermarks/copy-trading.png",
   },
   {
     title: "Become a Partner",
     desc: "Earn commissions by referring traders to our broker partner.",
     price: "Unlimited Earnings",
-    button: "Sign Up",
+    button: "Choose Your Broker",
     link: PARTNER_LINK,
-    icon: "🤝",
+    badge: "Broker Partner",
+    watermark: "/images/watermarks/become-a-partner.png",
+    opensPartnerModal: true,
+  },
+];
+
+const partnerBrokerOptions = [
+  {
+    link: "https://portal.fortuneprime.com/getview?view=register&token=0pCE0B",
+    logo: "/images/brokers/fpg.png",
+  },
+  {
+    link: "https://www.markets4you.com/",
+    logo: "/images/brokers/markets4you.png",
+  },
+  {
+    link: `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+      "Hi, I want to inquire about Broker Sponsor Slot 3."
+    )}`,
+    logo: "/images/brokers/slot1.png",
+  },
+  {
+    link: `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+      "Hi, I want to inquire about Broker Sponsor Slot 4."
+    )}`,
+    logo: "/images/brokers/slot2.png",
+  },
+  {
+    link: `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+      "Hi, I want to inquire about Broker Sponsor Slot 5."
+    )}`,
+    logo: "/images/brokers/slot3.png",
   },
 ];
 
@@ -56,6 +92,13 @@ const stats = [
   { label: "Clients", value: "500+" },
   { label: "Support", value: "24/7" },
   { label: "Market Focus", value: "XAUUSD" },
+];
+
+const trustPoints = [
+  "Direct Telegram & WhatsApp support",
+  "Clear payment process via USDT",
+  "Live site with active product pages",
+  "Mentoring and copy trading access available",
 ];
 
 const testimonials = [
@@ -138,6 +181,7 @@ function getTimeLeft() {
   const end = new Date();
   end.setHours(23, 59, 59, 999);
   const diff = end.getTime() - now.getTime();
+
   if (diff <= 0) return "00:00:00";
 
   const hours = String(Math.floor(diff / (1000 * 60 * 60))).padStart(2, "0");
@@ -152,12 +196,67 @@ function getTimeLeft() {
   return `${hours}:${minutes}:${seconds}`;
 }
 
+async function copyText(text) {
+  try {
+    if (navigator?.clipboard?.writeText) {
+      await navigator.clipboard.writeText(text);
+    } else {
+      const textarea = document.createElement("textarea");
+      textarea.value = text;
+      textarea.setAttribute("readonly", "");
+      textarea.style.position = "absolute";
+      textarea.style.left = "-9999px";
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textarea);
+    }
+    alert("Copied successfully!");
+  } catch (error) {
+    alert("Unable to copy. Please copy it manually.");
+  }
+}
+
+function ServiceAction({ service, onOpenPartnerModal }) {
+  if (service.opensPartnerModal) {
+    return (
+      <button type="button" onClick={onOpenPartnerModal} style={blueButton}>
+        {service.button}
+      </button>
+    );
+  }
+
+  if (service.link.startsWith("/")) {
+    return (
+      <Link
+        to={service.link}
+        style={{ marginTop: "auto", textDecoration: "none" }}
+      >
+        <button style={blueButton}>{service.button}</button>
+      </Link>
+    );
+  }
+
+  return (
+    <a
+      href={service.link}
+      target="_blank"
+      rel="noreferrer"
+      style={{ marginTop: "auto", textDecoration: "none" }}
+    >
+      <button style={blueButton}>{service.button}</button>
+    </a>
+  );
+}
+
 export default function App() {
   const [profit, setProfit] = useState(3200);
   const [showPopup, setShowPopup] = useState(false);
   const [countdown, setCountdown] = useState(getTimeLeft());
   const [viewers, setViewers] = useState(18);
   const [recentTime, setRecentTime] = useState("2 mins ago");
+  const [copied, setCopied] = useState(false);
+  const [showPartnerModal, setShowPartnerModal] = useState(false);
 
   const recentTimes = [
     "Just now",
@@ -176,11 +275,11 @@ export default function App() {
   );
 
   useEffect(() => {
-    const interval = setInterval(() => {
+    const profitInterval = setInterval(() => {
       setProfit((prev) => prev + Math.floor(Math.random() * 20));
     }, 3000);
 
-    const timer = setTimeout(() => setShowPopup(true), 3500);
+    const popupTimer = setTimeout(() => setShowPopup(true), 3500);
 
     const countdownTimer = setInterval(() => {
       setCountdown(getTimeLeft());
@@ -193,25 +292,49 @@ export default function App() {
         if (next > 30) next = 30;
         return next;
       });
+
       setRecentTime(recentTimes[Math.floor(Math.random() * recentTimes.length)]);
     }, 4000);
 
+    const onKeyDown = (event) => {
+      if (event.key === "Escape") {
+        setShowPartnerModal(false);
+        document.body.classList.remove("modal-open");
+      }
+    };
+
+    document.addEventListener("keydown", onKeyDown);
+
     return () => {
-      clearInterval(interval);
-      clearTimeout(timer);
+      clearInterval(profitInterval);
+      clearTimeout(popupTimer);
       clearInterval(countdownTimer);
       clearInterval(viewerInterval);
+      document.removeEventListener("keydown", onKeyDown);
     };
   }, []);
 
-  const copyWallet = () => {
-    navigator.clipboard.writeText(USDT_WALLET);
-    alert("Wallet copied!");
+  const copyWallet = async () => {
+    await copyText(USDT_WALLET);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
   return (
     <div style={page}>
       <style>{`
+        * {
+          box-sizing: border-box;
+        }
+
+        html {
+          scroll-behavior: smooth;
+        }
+
+        body.modal-open {
+          overflow: hidden;
+        }
+
         @keyframes stickyGlow {
           0% { box-shadow: 0 0 0 rgba(37, 211, 102, 0); }
           50% { box-shadow: 0 0 24px rgba(37, 211, 102, 0.32); }
@@ -222,6 +345,45 @@ export default function App() {
           0% { box-shadow: 0 0 0 rgba(56, 189, 248, 0); }
           50% { box-shadow: 0 0 18px rgba(56, 189, 248, 0.16); }
           100% { box-shadow: 0 0 0 rgba(56, 189, 248, 0); }
+        }
+
+        @keyframes floatBadge {
+          0% { transform: translateY(0px); }
+          50% { transform: translateY(-3px); }
+          100% { transform: translateY(0px); }
+        }
+
+        .hover-lift {
+          transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+        }
+
+        .hover-lift:hover {
+          transform: translateY(-4px);
+          box-shadow: 0 18px 40px rgba(0, 0, 0, 0.24);
+          border-color: rgba(56, 189, 248, 0.28) !important;
+        }
+
+        .service-card:hover .service-watermark-bg {
+          transform: scale(1.05);
+        }
+
+        .service-badge {
+          animation: floatBadge 2.4s ease-in-out infinite;
+        }
+
+        .hero-card-glow {
+          position: relative;
+          overflow: hidden;
+        }
+
+        .hero-card-glow::before {
+          content: "";
+          position: absolute;
+          inset: -120px auto auto -120px;
+          width: 240px;
+          height: 240px;
+          background: radial-gradient(circle, rgba(56,189,248,0.16), transparent 70%);
+          pointer-events: none;
         }
 
         @media (max-width: 1200px) {
@@ -246,8 +408,15 @@ export default function App() {
             margin-bottom: 18px !important;
           }
 
+          .top-nav-brand {
+            width: 100% !important;
+            justify-content: center !important;
+          }
+
           .top-nav-links {
             gap: 10px !important;
+            justify-content: center !important;
+            width: 100% !important;
           }
 
           .hero-grid {
@@ -282,15 +451,12 @@ export default function App() {
             width: 100% !important;
           }
 
-          .stats-grid {
-            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-            gap: 12px !important;
-          }
-
           .services-grid,
           .testimonials-grid,
           .info-grid,
-          .broker-grid {
+          .broker-grid,
+          .trust-grid,
+          .partner-modal-grid {
             grid-template-columns: 1fr !important;
             gap: 14px !important;
           }
@@ -327,6 +493,16 @@ export default function App() {
             height: 300px !important;
           }
 
+          .gold-chart-stats-grid {
+            grid-template-columns: 1fr 1fr !important;
+            gap: 10px !important;
+          }
+
+          .gold-chart-stat-card {
+            padding: 10px !important;
+            min-height: 68px !important;
+          }
+
           .home-sticky-bar {
             padding: 10px 12px !important;
           }
@@ -344,13 +520,26 @@ export default function App() {
             justify-content: center !important;
             text-align: center !important;
           }
+
+          .micro-proof-row {
+            grid-template-columns: 1fr !important;
+          }
+
+          .brand-logo-image {
+            width: 46px !important;
+            height: 46px !important;
+          }
+
+          .partner-modal-card {
+            padding: 18px !important;
+          }
+
+          .partner-logo-only-wrap {
+            height: 88px !important;
+          }
         }
 
         @media (max-width: 480px) {
-          .stats-grid {
-            grid-template-columns: 1fr 1fr !important;
-          }
-
           .hero-title {
             font-size: 32px !important;
           }
@@ -366,29 +555,68 @@ export default function App() {
           .top-nav-links {
             font-size: 14px !important;
           }
+
+          .brand-logo-image {
+            width: 42px !important;
+            height: 42px !important;
+          }
+
+          .gold-chart-stats-grid {
+            gap: 8px !important;
+          }
+
+          .gold-chart-stat-card {
+            padding: 9px !important;
+            border-radius: 12px !important;
+            min-height: 64px !important;
+          }
+
+          .gold-chart-stat-value {
+            font-size: 17px !important;
+          }
+
+          .gold-chart-stat-label {
+            font-size: 10px !important;
+          }
         }
       `}</style>
 
       <div className="app-shell" style={{ maxWidth: 1240, margin: "0 auto" }}>
+        <div style={announcementBar}>
+          🔥 Premium forex tools, mentoring, copy trading, and broker partner access — all in one place.
+        </div>
+
         <div className="top-nav" style={topNav}>
-          <h2 style={{ margin: 0, color: "#38bdf8" }}>Autom8 Trading</h2>
+          <div className="top-nav-brand" style={brandWrap}>
+            <img
+              src={BRAND_LOGO}
+              alt="Autom8 Trading Logo"
+              className="brand-logo-image"
+              style={brandLogoImage}
+            />
+            <div>
+              <h2 style={{ margin: 0, color: "#38bdf8", lineHeight: 1 }}>
+                Autom8 Trading
+              </h2>
+              <div style={brandSubtext}>
+                Forex EA • Copy Trading • Mentoring
+              </div>
+            </div>
+          </div>
 
           <div className="top-nav-links" style={topNavLinks}>
             <Link to="/" style={navLink}>Home</Link>
             <Link to="/buy-forex-ea" style={navLink}>EA Products</Link>
+            <Link to="/copy-trading" style={navLink}>Copy Trading</Link>
             <Link to="/mentoring" style={navLink}>Mentoring</Link>
-            <a href={TELEGRAM_LINK} target="_blank" rel="noreferrer" style={navLink}>
-              Telegram
-            </a>
-            <a href={whatsappLink} target="_blank" rel="noreferrer" style={navLink}>
-              WhatsApp
-            </a>
+            <a href={TELEGRAM_LINK} target="_blank" rel="noreferrer" style={navLink}>Telegram</a>
+            <a href={whatsappLink} target="_blank" rel="noreferrer" style={navLink}>WhatsApp</a>
             <a href={`mailto:${CONTACT_EMAIL}`} style={navLink}>Email</a>
           </div>
         </div>
 
         <div className="hero-grid" style={heroGrid}>
-          <div className="hero-card" style={glassCard}>
+          <div className="hero-card hero-card-glow" style={glassCard}>
             <div style={pill}>Forex Automation • Premium Access</div>
 
             <h1 className="hero-title" style={heroTitle}>
@@ -401,9 +629,11 @@ export default function App() {
               path into the market.
             </p>
 
-            <div style={countdownText}>⏳ Offer ends today in: {countdown}</div>
-            <div style={viewerCountStyle}>👥 {viewers} people viewing now</div>
-            <div style={lastPurchaseStyle}>🕒 Last purchase: {recentTime}</div>
+            <div className="micro-proof-row" style={microProofRow}>
+              <div style={microProofItem}>⏳ Offer ends today in: {countdown}</div>
+              <div style={microProofItemGreen}>👥 {viewers} people viewing now</div>
+              <div style={microProofItemMuted}>🕒 Last purchase: {recentTime}</div>
+            </div>
 
             <div className="metric-wrap" style={metricWrap}>
               <div className="metric-card" style={metricCard}>
@@ -418,21 +648,36 @@ export default function App() {
             </div>
 
             <div className="hero-actions" style={heroActions}>
-              <Link to="/buy-forex-ea">
-                <button style={primaryButton}>View Forex EA Products</button>
+              <Link to="/buy-forex-ea" style={{ textDecoration: "none" }}>
+                <button style={primaryBlueButton}>View Forex EA Products</button>
               </Link>
 
-              <Link to="/mentoring">
+              <Link to="/copy-trading" style={{ textDecoration: "none" }}>
+                <button style={secondaryBlueButton}>View Copy Trading</button>
+              </Link>
+
+              <Link to="/mentoring" style={{ textDecoration: "none" }}>
                 <button style={secondaryButton}>Apply for Mentoring</button>
               </Link>
 
-              <a href={whatsappLink} target="_blank" rel="noreferrer">
+              <a href={whatsappLink} target="_blank" rel="noreferrer" style={{ textDecoration: "none" }}>
                 <button style={whatsappButton}>WhatsApp</button>
               </a>
 
               <button onClick={copyWallet} style={ghostButton}>
-                Copy USDT Wallet
+                {copied ? "Wallet Copied" : "Copy USDT Wallet"}
               </button>
+            </div>
+
+            <div style={heroTrustBox}>
+              <div style={heroTrustTitle}>Why buyers choose Autom8 Trading</div>
+              <div className="trust-grid" style={trustGrid}>
+                {trustPoints.map((point) => (
+                  <div key={point} style={trustItem}>
+                    ✅ {point}
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 
@@ -450,22 +695,26 @@ export default function App() {
                 height="360"
                 frameBorder="0"
                 title="Live Gold Chart"
-              ></iframe>
+              />
             </div>
 
             <p style={chartNote}>
               Monitor gold in real time while exploring our automation products.
             </p>
-          </div>
-        </div>
 
-        <div className="stats-grid" style={statsGrid}>
-          {stats.map((item) => (
-            <div key={item.label} style={statCard}>
-              <div style={statValue}>{item.value}</div>
-              <div style={statLabel}>{item.label}</div>
+            <div className="gold-chart-stats-grid" style={chartStatsGrid}>
+              {stats.map((item) => (
+                <div key={item.label} className="gold-chart-stat-card" style={chartStatCard}>
+                  <div className="gold-chart-stat-value" style={chartStatValue}>
+                    {item.value}
+                  </div>
+                  <div className="gold-chart-stat-label" style={chartStatLabel}>
+                    {item.label}
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
+          </div>
         </div>
 
         <div style={{ marginBottom: 34 }}>
@@ -478,28 +727,49 @@ export default function App() {
 
           <div className="services-grid" style={servicesGrid}>
             {services.map((service) => (
-              <div key={service.title} style={serviceCard}>
-                <div style={serviceIconWrap}>{service.icon}</div>
-                <h3 style={{ marginTop: 0, marginBottom: 10 }}>{service.title}</h3>
-                <p style={serviceDesc}>{service.desc}</p>
-                <div style={servicePrice}>{service.price}</div>
+              <div key={service.title} style={serviceCard} className="hover-lift service-card">
+                <div
+                  className="service-watermark-bg"
+                  style={{
+                    ...serviceWatermark,
+                    backgroundImage: `url(${service.watermark})`,
+                  }}
+                />
+                <div style={serviceOverlay} />
 
-                {service.link.startsWith("/") ? (
-                  <Link to={service.link} style={{ marginTop: "auto" }}>
-                    <button style={blueButton}>{service.button}</button>
-                  </Link>
-                ) : (
-                  <a
-                    href={service.link}
-                    target="_blank"
-                    rel="noreferrer"
-                    style={{ marginTop: "auto" }}
-                  >
-                    <button style={blueButton}>{service.button}</button>
-                  </a>
-                )}
+                <div style={serviceContent}>
+                  <div style={serviceTopRow}>
+                    <div className="service-badge" style={serviceBadge}>
+                      {service.badge}
+                    </div>
+                  </div>
+
+                  <h3 style={serviceTitle}>{service.title}</h3>
+                  <p style={serviceDesc}>{service.desc}</p>
+                  <div style={servicePrice}>{service.price}</div>
+
+                  <div style={serviceTrustLine}>
+                    ✔ Trusted support • Fast access guidance
+                  </div>
+
+                  <ServiceAction
+                    service={service}
+                    onOpenPartnerModal={() => {
+                      document.body.classList.add("modal-open");
+                      setShowPartnerModal(true);
+                    }}
+                  />
+                </div>
               </div>
             ))}
+          </div>
+        </div>
+
+        <div style={urgencyStrip}>
+          <div style={urgencyTitle}>⚡ High-conversion upgrade</div>
+          <div style={urgencyText}>
+            Buyers get faster responses through Telegram and WhatsApp, with
+            clear payment steps and direct support after proof of payment.
           </div>
         </div>
 
@@ -515,7 +785,7 @@ export default function App() {
 
           <div className="testimonials-grid" style={testimonialsGrid}>
             {testimonials.map((item) => (
-              <div key={item.name} style={testimonialCard}>
+              <div key={item.name} style={testimonialCard} className="hover-lift">
                 <div style={stars}>★★★★★</div>
                 <p style={testimonialText}>“{item.text}”</p>
                 <div style={testimonialName}>{item.name}</div>
@@ -542,6 +812,7 @@ export default function App() {
                   ...brokerCard,
                   ...(broker.available ? brokerCardAvailable : {}),
                 }}
+                className="hover-lift"
               >
                 <div style={brokerTop}>
                   <div
@@ -576,37 +847,21 @@ export default function App() {
                 </div>
 
                 <div style={brokerButtons}>
-                  <a
-                    href={broker.signupLink}
-                    target="_blank"
-                    rel="noreferrer"
-                    style={{ textDecoration: "none", flex: 1 }}
-                  >
+                  <a href={broker.signupLink} target="_blank" rel="noreferrer" style={{ textDecoration: "none", flex: 1 }}>
                     <button
-                      style={
-                        broker.available ? brokerGhostButton : brokerBlueButton
-                      }
+                      style={broker.available ? brokerGhostButton : brokerBlueButton}
                       disabled={broker.available}
                     >
                       {broker.primaryCta}
                     </button>
                   </a>
 
-                  <a
-                    href={broker.videoLink}
-                    target="_blank"
-                    rel="noreferrer"
-                    style={{ textDecoration: "none", flex: 1 }}
-                  >
+                  <a href={broker.videoLink} target="_blank" rel="noreferrer" style={{ textDecoration: "none", flex: 1 }}>
                     <button
-                      style={
-                        broker.available ? brokerGhostButton : brokerVideoButton
-                      }
+                      style={broker.available ? brokerGhostButton : brokerVideoButton}
                       disabled={broker.available}
                     >
-                      {broker.available
-                        ? broker.secondaryCta
-                        : `▶ ${broker.secondaryCta}`}
+                      {broker.available ? broker.secondaryCta : `▶ ${broker.secondaryCta}`}
                     </button>
                   </a>
                 </div>
@@ -616,7 +871,7 @@ export default function App() {
         </div>
 
         <div className="info-grid" style={infoGrid}>
-          <div style={glassCard}>
+          <div style={glassCard} className="hover-lift">
             <h2 style={{ marginTop: 0 }}>Pay via USDT (BEP20)</h2>
             <p style={bodyText}>
               Send payment to the wallet below, then message us on Telegram or
@@ -625,16 +880,21 @@ export default function App() {
 
             <div style={walletBox}>{USDT_WALLET}</div>
 
-            <button onClick={copyWallet} style={primaryButton}>
-              Copy Wallet Address
+            <div style={walletNote}>
+              Fastest confirmation path: send proof on WhatsApp or Telegram
+              after payment.
+            </div>
+
+            <button onClick={copyWallet} style={primaryBlueButton}>
+              {copied ? "Wallet Copied" : "Copy Wallet Address"}
             </button>
           </div>
 
-          <div style={glassCard}>
+          <div style={glassCard} className="hover-lift">
             <h2 style={{ marginTop: 0 }}>Contact Us</h2>
             <p style={bodyText}>
-              For support, payment confirmation, mentoring inquiries, and partner
-              concerns.
+              For support, payment confirmation, mentoring inquiries, and
+              partner concerns.
             </p>
 
             <div style={contactGrid}>
@@ -647,24 +907,14 @@ export default function App() {
 
               <div className="contact-row" style={contactRow}>
                 <span style={contactKey}>Telegram</span>
-                <a
-                  href={TELEGRAM_LINK}
-                  target="_blank"
-                  rel="noreferrer"
-                  style={contactLink}
-                >
+                <a href={TELEGRAM_LINK} target="_blank" rel="noreferrer" style={contactLink}>
                   @DontCopyMaster
                 </a>
               </div>
 
               <div className="contact-row" style={contactRow}>
                 <span style={contactKey}>WhatsApp</span>
-                <a
-                  href={whatsappLink}
-                  target="_blank"
-                  rel="noreferrer"
-                  style={contactLink}
-                >
+                <a href={whatsappLink} target="_blank" rel="noreferrer" style={contactLink}>
                   +639455023449
                 </a>
               </div>
@@ -673,24 +923,36 @@ export default function App() {
         </div>
 
         <div style={ctaCard}>
-          <h2 style={ctaTitle}>Limited Slots Available</h2>
+          <div style={ctaBadge}>LIMITED SLOTS AVAILABLE</div>
+          <h2 style={ctaTitle}>Start with the right service for your trading goal</h2>
           <p style={ctaText}>
-            Start with our EA products, join mentoring, or build an income stream
-            through our partner program.
+            Start with our EA products, join mentoring, access copy trading, or
+            build an income stream through our partner program.
           </p>
 
           <div className="cta-actions" style={ctaActions}>
-            <Link to="/buy-forex-ea">
-              <button style={primaryButton}>Start with EA</button>
+            <Link to="/buy-forex-ea" style={{ textDecoration: "none" }}>
+              <button style={primaryBlueButton}>Start with EA</button>
             </Link>
 
-            <Link to="/mentoring">
+            <Link to="/copy-trading" style={{ textDecoration: "none" }}>
+              <button style={secondaryBlueButton}>View Copy Trading</button>
+            </Link>
+
+            <Link to="/mentoring" style={{ textDecoration: "none" }}>
               <button style={secondaryButton}>Apply for Mentoring</button>
             </Link>
 
-            <a href={whatsappLink} target="_blank" rel="noreferrer">
-              <button style={whatsappButton}>WhatsApp</button>
-            </a>
+            <button
+              type="button"
+              onClick={() => {
+                document.body.classList.add("modal-open");
+                setShowPartnerModal(true);
+              }}
+              style={ghostButton}
+            >
+              Choose Your Broker
+            </button>
           </div>
         </div>
 
@@ -712,15 +974,79 @@ export default function App() {
 
         {showPopup && (
           <div className="popup-card" style={popupCard}>
-            <p style={{ margin: "0 0 10px 0" }}>
+            <p style={{ margin: "0 0 10px 0", fontWeight: 700 }}>
               🔥 Someone just purchased an EA package
             </p>
-            <Link to="/buy-forex-ea">
-              <button style={blueButton}>Browse EA</button>
-            </Link>
+            <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+              <Link to="/buy-forex-ea" style={{ textDecoration: "none" }}>
+                <button style={blueButton}>Browse EA</button>
+              </Link>
+              <button onClick={() => setShowPopup(false)} style={smallGhostButton}>
+                Close
+              </button>
+            </div>
           </div>
         )}
       </div>
+
+      {showPartnerModal && (
+        <div
+          style={modalBackdrop}
+          onClick={() => {
+            document.body.classList.remove("modal-open");
+            setShowPartnerModal(false);
+          }}
+        >
+          <div
+            className="partner-modal-card"
+            style={modalCard}
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div style={modalHeader}>
+              <div>
+                <div style={modalPill}>Become a Partner</div>
+                <h2 style={modalTitle}>Choose Your Broker</h2>
+                <p style={modalText}>
+                  Click a logo to continue.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => {
+                  document.body.classList.remove("modal-open");
+                  setShowPartnerModal(false);
+                }}
+                style={modalCloseButton}
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="partner-modal-grid" style={partnerLogoGrid}>
+              {partnerBrokerOptions.map((option, index) => (
+                <a
+                  key={index}
+                  href={option.link}
+                  target="_blank"
+                  rel="noreferrer"
+                  style={partnerLogoLink}
+                >
+                  <div style={partnerLogoOnlyCard} className="hover-lift">
+                    <div style={partnerLogoOnlyWrap} className="partner-logo-only-wrap">
+                      <img
+                        src={option.logo}
+                        alt={`Broker option ${index + 1}`}
+                        style={partnerLogoOnly}
+                      />
+                    </div>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="home-sticky-bar" style={stickyBar}>
         <div className="home-sticky-inner" style={stickyInner}>
@@ -754,6 +1080,18 @@ const page = {
   paddingBottom: 130,
 };
 
+const announcementBar = {
+  background:
+    "linear-gradient(90deg, rgba(56,189,248,0.16), rgba(34,197,94,0.12))",
+  border: "1px solid rgba(125,211,252,0.14)",
+  borderRadius: 14,
+  padding: "10px 14px",
+  color: "#dbeafe",
+  fontWeight: 700,
+  textAlign: "center",
+  marginBottom: 18,
+};
+
 const topNav = {
   display: "flex",
   justifyContent: "space-between",
@@ -761,6 +1099,29 @@ const topNav = {
   marginBottom: 24,
   flexWrap: "wrap",
   gap: 12,
+};
+
+const brandWrap = {
+  display: "flex",
+  alignItems: "center",
+  gap: 12,
+};
+
+const brandLogoImage = {
+  width: 52,
+  height: 52,
+  borderRadius: 12,
+  objectFit: "cover",
+  display: "block",
+  boxShadow: "0 12px 24px rgba(37,99,235,0.24)",
+  border: "1px solid rgba(255,255,255,0.12)",
+  background: "rgba(255,255,255,0.04)",
+};
+
+const brandSubtext = {
+  color: "#94a3b8",
+  fontSize: 13,
+  marginTop: 4,
 };
 
 const topNavLinks = {
@@ -815,23 +1176,44 @@ const heroText = {
   marginTop: 0,
 };
 
-const countdownText = {
+const microProofRow = {
+  display: "grid",
+  gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+  gap: 10,
+  marginTop: 14,
+};
+
+const microProofItem = {
   color: "#facc15",
   fontWeight: 700,
-  marginTop: 8,
+  marginTop: 0,
+  fontSize: 14,
+  padding: "10px 12px",
+  borderRadius: 12,
+  background: "rgba(250,204,21,0.08)",
+  border: "1px solid rgba(250,204,21,0.12)",
 };
 
-const viewerCountStyle = {
+const microProofItemGreen = {
   color: "#22c55e",
   fontWeight: 700,
-  marginTop: 8,
+  marginTop: 0,
+  fontSize: 14,
+  padding: "10px 12px",
+  borderRadius: 12,
+  background: "rgba(34,197,94,0.08)",
+  border: "1px solid rgba(34,197,94,0.12)",
 };
 
-const lastPurchaseStyle = {
-  color: "#94a3b8",
+const microProofItemMuted = {
+  color: "#cbd5e1",
   fontWeight: 700,
-  marginTop: 8,
+  marginTop: 0,
   fontSize: 14,
+  padding: "10px 12px",
+  borderRadius: 12,
+  background: "rgba(148,163,184,0.08)",
+  border: "1px solid rgba(148,163,184,0.12)",
 };
 
 const metricWrap = {
@@ -873,6 +1255,35 @@ const heroActions = {
   marginTop: 22,
 };
 
+const heroTrustBox = {
+  marginTop: 20,
+  padding: 16,
+  borderRadius: 16,
+  background: "rgba(15,23,42,0.62)",
+  border: "1px solid rgba(148,163,184,0.12)",
+};
+
+const heroTrustTitle = {
+  fontWeight: 800,
+  marginBottom: 12,
+  color: "#e2e8f0",
+};
+
+const trustGrid = {
+  display: "grid",
+  gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+  gap: 10,
+};
+
+const trustItem = {
+  padding: "10px 12px",
+  borderRadius: 12,
+  background: "rgba(2,6,23,0.28)",
+  border: "1px solid rgba(148,163,184,0.10)",
+  color: "#cbd5e1",
+  fontSize: 14,
+};
+
 const chartHeader = {
   display: "flex",
   justifyContent: "space-between",
@@ -899,29 +1310,41 @@ const chartNote = {
   fontSize: 14,
 };
 
-const statsGrid = {
+const chartStatsGrid = {
   display: "grid",
-  gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
-  gap: 16,
-  marginBottom: 32,
+  gridTemplateColumns: "1fr 1fr",
+  gap: 12,
+  marginTop: 16,
 };
 
-const statCard = {
-  background: "rgba(15, 23, 42, 0.72)",
-  border: "1px solid rgba(148,163,184,0.14)",
-  borderRadius: 16,
-  padding: 18,
-  boxShadow: "0 12px 30px rgba(0,0,0,0.2)",
+const chartStatCard = {
+  background: "linear-gradient(180deg, rgba(15,23,42,0.72), rgba(15,23,42,0.54))",
+  border: "1px solid rgba(148,163,184,0.12)",
+  borderRadius: 14,
+  padding: 11,
+  minHeight: 70,
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "center",
+  alignItems: "center",
+  textAlign: "center",
+  boxShadow: "inset 0 1px 0 rgba(255,255,255,0.04)",
+  backdropFilter: "blur(8px)",
 };
 
-const statValue = {
-  fontSize: 28,
+const chartStatValue = {
+  fontSize: 20,
   fontWeight: 800,
-  color: "#38bdf8",
+  color: "#7dd3fc",
+  lineHeight: 1.05,
+  letterSpacing: "-0.02em",
 };
 
-const statLabel = {
-  color: "#94a3b8",
+const chartStatLabel = {
+  color: "#cbd5e1",
+  fontSize: 11,
+  marginTop: 5,
+  lineHeight: 1.15,
 };
 
 const sectionHeader = {
@@ -946,38 +1369,114 @@ const servicesGrid = {
 };
 
 const serviceCard = {
+  position: "relative",
+  overflow: "hidden",
   background: "rgba(15, 23, 42, 0.72)",
   border: "1px solid rgba(148,163,184,0.14)",
   borderRadius: 18,
-  padding: 20,
+  padding: 0,
   boxShadow: "0 12px 34px rgba(0,0,0,0.18)",
   display: "flex",
   flexDirection: "column",
+  minHeight: 300,
 };
 
-const serviceIconWrap = {
-  width: 48,
-  height: 48,
-  borderRadius: 12,
-  background: "rgba(56, 189, 248, 0.14)",
+const serviceWatermark = {
+  position: "absolute",
+  inset: 0,
+  backgroundRepeat: "no-repeat",
+  backgroundPosition: "center",
+  backgroundSize: "cover",
+  opacity: 0.24,
+  transform: "scale(1)",
+  transition: "transform 0.35s ease",
+  zIndex: 0,
+};
+
+const serviceOverlay = {
+  position: "absolute",
+  inset: 0,
+  background:
+    "linear-gradient(180deg, rgba(2,6,23,0.40) 0%, rgba(2,6,23,0.65) 35%, rgba(2,6,23,0.92) 100%)",
+  zIndex: 1,
+};
+
+const serviceContent = {
+  position: "relative",
+  zIndex: 2,
+  padding: 20,
+  display: "flex",
+  flexDirection: "column",
+  height: "100%",
+};
+
+const serviceTopRow = {
   display: "flex",
   alignItems: "center",
-  justifyContent: "center",
-  fontSize: 20,
+  justifyContent: "flex-end",
+  gap: 10,
   marginBottom: 14,
 };
 
+const serviceBadge = {
+  padding: "6px 10px",
+  borderRadius: 999,
+  background: "rgba(56,189,248,0.12)",
+  color: "#7dd3fc",
+  border: "1px solid rgba(56,189,248,0.22)",
+  fontWeight: 800,
+  fontSize: 11,
+  whiteSpace: "nowrap",
+};
+
+const serviceTitle = {
+  marginTop: 0,
+  marginBottom: 10,
+  fontSize: 24,
+  lineHeight: 1.15,
+};
+
 const serviceDesc = {
-  color: "#cbd5e1",
-  minHeight: 72,
+  color: "#e2e8f0",
+  minHeight: 88,
   marginTop: 0,
   flex: 1,
+  lineHeight: 1.6,
 };
 
 const servicePrice = {
   fontWeight: 700,
-  marginBottom: 16,
+  marginBottom: 10,
   color: "#f8fafc",
+};
+
+const serviceTrustLine = {
+  fontSize: 13,
+  color: "#cbd5e1",
+  marginBottom: 16,
+};
+
+const urgencyStrip = {
+  display: "grid",
+  gap: 8,
+  marginBottom: 34,
+  padding: "18px 20px",
+  borderRadius: 18,
+  background:
+    "linear-gradient(135deg, rgba(15,23,42,0.90), rgba(30,41,59,0.82))",
+  border: "1px solid rgba(148,163,184,0.14)",
+  boxShadow: "0 18px 40px rgba(0,0,0,0.18)",
+};
+
+const urgencyTitle = {
+  color: "#facc15",
+  fontWeight: 800,
+  fontSize: 16,
+};
+
+const urgencyText = {
+  color: "#cbd5e1",
+  lineHeight: 1.6,
 };
 
 const testimonialsGrid = {
@@ -1052,7 +1551,8 @@ const brokerLogoWrap = {
   alignItems: "center",
   justifyContent: "center",
   overflow: "hidden",
-  boxShadow: "inset 0 1px 0 rgba(255,255,255,0.55), 0 8px 18px rgba(2,6,23,0.12)",
+  boxShadow:
+    "inset 0 1px 0 rgba(255,255,255,0.55), 0 8px 18px rgba(2,6,23,0.12)",
 };
 
 const brokerLogoWrapAvailable = {
@@ -1134,6 +1634,12 @@ const walletBox = {
   marginBottom: 14,
 };
 
+const walletNote = {
+  fontSize: 13,
+  color: "#94a3b8",
+  marginBottom: 16,
+};
+
 const contactGrid = {
   display: "grid",
   gap: 12,
@@ -1172,6 +1678,18 @@ const ctaCard = {
   boxShadow: "0 18px 60px rgba(0,0,0,0.25)",
 };
 
+const ctaBadge = {
+  display: "inline-block",
+  marginBottom: 12,
+  padding: "6px 12px",
+  borderRadius: 999,
+  background: "rgba(250,204,21,0.10)",
+  color: "#facc15",
+  border: "1px solid rgba(250,204,21,0.20)",
+  fontWeight: 800,
+  fontSize: 12,
+};
+
 const ctaTitle = {
   marginTop: 0,
   fontSize: "clamp(28px, 5vw, 34px)",
@@ -1203,15 +1721,25 @@ const popupCard = {
   zIndex: 1000,
 };
 
-const primaryButton = {
-  background: "linear-gradient(135deg, #22c55e, #16a34a)",
-  color: "white",
+const primaryBlueButton = {
+  background: "linear-gradient(135deg, #38bdf8, #2563eb)",
+  color: "#ffffff",
   border: "none",
   padding: "12px 18px",
   borderRadius: 10,
   cursor: "pointer",
-  fontWeight: 700,
-  boxShadow: "0 10px 24px rgba(34,197,94,0.22)",
+  fontWeight: 800,
+  boxShadow: "0 10px 24px rgba(37,99,235,0.22)",
+};
+
+const secondaryBlueButton = {
+  background: "rgba(56,189,248,0.12)",
+  color: "#7dd3fc",
+  border: "1px solid rgba(56,189,248,0.24)",
+  padding: "12px 18px",
+  borderRadius: 10,
+  cursor: "pointer",
+  fontWeight: 800,
 };
 
 const secondaryButton = {
@@ -1295,6 +1823,16 @@ const whatsappButton = {
   fontWeight: 700,
 };
 
+const smallGhostButton = {
+  background: "transparent",
+  color: "#cbd5e1",
+  border: "1px solid rgba(148,163,184,0.18)",
+  padding: "10px 14px",
+  borderRadius: 10,
+  cursor: "pointer",
+  fontWeight: 700,
+};
+
 const floatingWhatsappWrap = {
   position: "fixed",
   right: 20,
@@ -1313,6 +1851,111 @@ const floatingWhatsappButton = {
   borderRadius: 999,
   boxShadow: "0 16px 40px rgba(37,211,102,0.28)",
   fontWeight: 700,
+};
+
+const modalBackdrop = {
+  position: "fixed",
+  inset: 0,
+  background: "rgba(2, 6, 23, 0.72)",
+  backdropFilter: "blur(6px)",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  padding: 20,
+  zIndex: 1200,
+};
+
+const modalCard = {
+  width: "min(960px, 100%)",
+  background: "rgba(11, 23, 48, 0.96)",
+  border: "1px solid rgba(148,163,184,0.18)",
+  borderRadius: 24,
+  padding: 22,
+  boxShadow: "0 24px 80px rgba(0,0,0,0.42)",
+};
+
+const modalHeader = {
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "flex-start",
+  gap: 16,
+  marginBottom: 18,
+};
+
+const modalPill = {
+  display: "inline-block",
+  padding: "6px 12px",
+  borderRadius: 999,
+  background: "rgba(56,189,248,0.12)",
+  color: "#7dd3fc",
+  fontSize: 12,
+  fontWeight: 800,
+  marginBottom: 10,
+};
+
+const modalTitle = {
+  margin: 0,
+  fontSize: "clamp(26px, 5vw, 34px)",
+};
+
+const modalText = {
+  color: "#94a3b8",
+  margin: "8px 0 0 0",
+};
+
+const modalCloseButton = {
+  border: "1px solid rgba(148,163,184,0.2)",
+  background: "rgba(15,23,42,0.72)",
+  color: "#f8fafc",
+  width: 42,
+  height: 42,
+  borderRadius: 12,
+  cursor: "pointer",
+  fontSize: 16,
+  fontWeight: 800,
+};
+
+const partnerLogoGrid = {
+  display: "grid",
+  gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))",
+  gap: 14,
+};
+
+const partnerLogoLink = {
+  textDecoration: "none",
+};
+
+const partnerLogoOnlyCard = {
+  background: "rgba(15, 23, 42, 0.78)",
+  border: "1px solid rgba(148,163,184,0.14)",
+  borderRadius: 18,
+  padding: 14,
+  minHeight: 120,
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+};
+
+const partnerLogoOnlyWrap = {
+  width: "100%",
+  height: 96,
+  borderRadius: 14,
+  background:
+    "linear-gradient(180deg, rgba(255,255,255,0.98), rgba(244,247,251,0.96))",
+  border: "1px solid rgba(255,255,255,0.45)",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  overflow: "hidden",
+  boxShadow:
+    "inset 0 1px 0 rgba(255,255,255,0.55), 0 8px 18px rgba(2,6,23,0.12)",
+};
+
+const partnerLogoOnly = {
+  maxWidth: "78%",
+  maxHeight: "72%",
+  objectFit: "contain",
+  display: "block",
 };
 
 const stickyBar = {
@@ -1359,4 +2002,3 @@ const stickyLimitedWrap = {
   background: "linear-gradient(135deg, #facc15, #f97316)",
   whiteSpace: "nowrap",
 };
-

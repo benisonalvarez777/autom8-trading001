@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo, useState } from "react";
 
 const TELEGRAM_LINK =
   "https://t.me/DontCopyMaster?text=Hi%2C%20I%20want%20to%20enroll%20in%20the%20Mentoring%20Program";
@@ -7,20 +7,39 @@ const BROKER_LINK =
   "https://portal.fortuneprime.com/getview?view=register&token=0pCE0B";
 
 const VIDEO_LINKS = [
-  { title: "Introduction To Forex", url: "/videos/Introduction to Forex.MP4" },
-  { title: "Understanding Currency Pairs", url: "/videos/The Basics of Forex and Understanding Currency Pairs.MP4" },
-  { title: "How to Open & Close Trades", url: "/videos/How to Open & Close Trades.MP4" },
-  { title: "The Art of Technical Analysis", url: "/videos/The Art Of Technical Analysis.MP4" },
-  { title: "The Art of Fundamental Analysis", url: "/videos/Technical And Fundamental Analysis.MP4" },
-  { title: "Risk Management", url: "/videos/Mastering Forex Trading Essential Risk Management Strategies for Every Trader.MP4" },
-  { title: "The Ultimate Trading Plan (Blueprint)", url: "/videos/Master the Market The Ultimate Trading Plan Blueprint.MP4" },
-  { title: "5 Styles of Forex Trading Strategies", url: "/videos/5 Styles of Forex Trading Strategies.mp4" },
+  { title: "Introduction To Forex", url: "/videos/Introduction to Forex.MP4", type: "local" },
+  {
+    title: "Understanding Currency Pairs",
+    url: "/videos/The Basics of Forex and Understanding Currency Pairs.MP4",
+    type: "local",
+  },
+  { title: "How to Open & Close Trades", url: "/videos/How to Open & Close Trades.MP4", type: "local" },
+  { title: "The Art of Technical Analysis", url: "/videos/The Art Of Technical Analysis.MP4", type: "local" },
+  {
+    title: "The Art of Fundamental Analysis",
+    url: "/videos/Technical And Fundamental Analysis.MP4",
+    type: "local",
+  },
+  {
+    title: "Risk Management",
+    url: "/videos/Mastering Forex Trading Essential Risk Management Strategies for Every Trader.MP4",
+    type: "local",
+  },
+  {
+    title: "The Ultimate Trading Plan (Blueprint)",
+    url: "/videos/Master the Market The Ultimate Trading Plan Blueprint.MP4",
+    type: "local",
+  },
+  {
+    title: "5 Styles of Forex Trading Strategies",
+    url: "/videos/5 Styles of Forex Trading Strategies.mp4",
+    type: "local",
+  },
 ];
 
 const BROKER_VIDEOS = [
-  { title: "How to Deposit FPG", url: "https://www.youtube.com/watch?v=yMhZ-QZJ8_A" },
-  { title: "How to Deposit M4U", url: "https://www.youtube.com/watch?v=kq31M4C6ZBw" },
-  
+  { title: "How to Deposit FPG", url: "https://www.youtube.com/watch?v=yMhZ-QZJ8_A", type: "youtube" },
+  { title: "How to Deposit M4U", url: "https://www.youtube.com/watch?v=kq31M4C6ZBw", type: "youtube" },
 ];
 
 const EBOOK_LINKS = {
@@ -53,7 +72,6 @@ const lessons = [
       "Common beginner mistakes",
     ],
   },
-  
   {
     title: "Technical Analysis",
     desc: "Chart-based strategy",
@@ -79,7 +97,7 @@ const lessons = [
 const pricingTiers = [
   {
     title: "Basic",
-    price: "$300",
+    price: "$100",
     features: [
       "Full video access",
       "Downloadable eBooks",
@@ -89,7 +107,7 @@ const pricingTiers = [
   },
   {
     title: "Advanced",
-    price: "$700",
+    price: "$200",
     featured: true,
     features: [
       "Everything in Basic",
@@ -100,7 +118,7 @@ const pricingTiers = [
   },
   {
     title: "VIP",
-    price: "$1,200",
+    price: "$300",
     features: [
       "Everything in Advanced",
       "1-on-1 mentoring",
@@ -125,9 +143,50 @@ const testimonials = [
   },
 ];
 
+function toYoutubeEmbed(url) {
+  try {
+    const parsed = new URL(url);
+    const id = parsed.searchParams.get("v");
+    return id ? `https://www.youtube.com/embed/${id}` : url;
+  } catch {
+    return url;
+  }
+}
+
 export default function Mentoring() {
+  const [activeVideo, setActiveVideo] = useState(null);
+
+  const allVideos = useMemo(() => {
+    return {
+      lessons: VIDEO_LINKS,
+      brokers: BROKER_VIDEOS,
+    };
+  }, []);
+
+  const closeModal = () => setActiveVideo(null);
+
   return (
     <div style={page}>
+      <style>{`
+        @media (max-width: 768px) {
+          .mentor-video-grid,
+          .mentor-card-grid,
+          .mentor-step-grid {
+            grid-template-columns: 1fr !important;
+          }
+
+          .mentor-modal-body {
+            width: calc(100vw - 24px) !important;
+            padding: 12px !important;
+          }
+
+          .mentor-video-frame,
+          .mentor-video-player {
+            height: 220px !important;
+          }
+        }
+      `}</style>
+
       <div style={glowOne}></div>
       <div style={glowTwo}></div>
 
@@ -153,7 +212,7 @@ export default function Mentoring() {
         <div style={glassCard}>
           <div style={pill}>How It Works</div>
           <h2 style={sectionTitle}>Simple Student Flow</h2>
-          <div style={stepGrid}>
+          <div className="mentor-step-grid" style={stepGrid}>
             <div style={miniCard}>
               <h3 style={miniTitle}>Step 1</h3>
               <p style={miniText}>Submit your mentoring application.</p>
@@ -173,7 +232,7 @@ export default function Mentoring() {
           <div style={pill}>Mentoring Plans</div>
           <h2 style={sectionTitle}>Choose Your Access Tier</h2>
 
-          <div style={cardGrid}>
+          <div className="mentor-card-grid" style={cardGrid}>
             {pricingTiers.map((tier) => (
               <div
                 key={tier.title}
@@ -212,7 +271,7 @@ export default function Mentoring() {
           <div style={pill}>Lesson Categories</div>
           <h2 style={sectionTitle}>Video + eBook Learning Modules</h2>
 
-          <div style={cardGrid}>
+          <div className="mentor-card-grid" style={cardGrid}>
             {lessons.map((lesson) => (
               <div key={lesson.title} style={tierCard}>
                 <h3 style={{ marginTop: 0, color: "#f8fafc" }}>{lesson.title}</h3>
@@ -244,23 +303,25 @@ export default function Mentoring() {
           <div style={pill}>Video Library</div>
           <h2 style={sectionTitle}>Self-Learning Tutorials</h2>
           <p style={sectionText}>
-            Replace these placeholder links with your real lesson videos anytime.
+            Click a lesson to open and play only one video at a time.
           </p>
 
-          <div style={videoGrid}>
-            {VIDEO_LINKS.map((video) => (
-              <div key={video.title} style={miniCard}>
-                <div style={videoTitle}>{video.title}</div>
-                <iframe
-                  width="100%"
-                  height="200"
-                  src={video.url.replace("watch?v=", "embed/")}
-                  title={video.title}
-                  frameBorder="0"
-                  allowFullScreen
-                  style={{ borderRadius: 10 }}
-                ></iframe>
-              </div>
+          <div className="mentor-video-grid" style={videoGrid}>
+            {allVideos.lessons.map((video) => (
+              <button
+                key={video.title}
+                type="button"
+                onClick={() => setActiveVideo(video)}
+                style={videoCardButton}
+              >
+                <div style={videoCard}>
+                  <div style={videoThumb}>
+                    <div style={playCircle}>▶</div>
+                  </div>
+                  <div style={videoTitle}>{video.title}</div>
+                  <div style={videoHint}>Click to watch</div>
+                </div>
+              </button>
             ))}
           </div>
         </div>
@@ -277,20 +338,22 @@ export default function Mentoring() {
             <button style={blueButton}>Open Broker Account</button>
           </a>
 
-          <div style={videoGrid}>
-            {BROKER_VIDEOS.map((video) => (
-              <div key={video.title} style={miniCard}>
-                <div style={videoTitle}>{video.title}</div>
-                <iframe
-                  width="100%"
-                  height="200"
-                  src={video.url.replace("watch?v=", "embed/")}
-                  title={video.title}
-                  frameBorder="0"
-                  allowFullScreen
-                  style={{ borderRadius: 10 }}
-                ></iframe>
-              </div>
+          <div className="mentor-video-grid" style={videoGrid}>
+            {allVideos.brokers.map((video) => (
+              <button
+                key={video.title}
+                type="button"
+                onClick={() => setActiveVideo(video)}
+                style={videoCardButton}
+              >
+                <div style={videoCard}>
+                  <div style={videoThumbYoutube}>
+                    <div style={playCircle}>▶</div>
+                  </div>
+                  <div style={videoTitle}>{video.title}</div>
+                  <div style={videoHint}>Click to watch</div>
+                </div>
+              </button>
             ))}
           </div>
         </div>
@@ -299,7 +362,7 @@ export default function Mentoring() {
           <div style={pill}>Testimonials</div>
           <h2 style={sectionTitle}>What Students Say</h2>
 
-          <div style={cardGrid}>
+          <div className="mentor-card-grid" style={cardGrid}>
             {testimonials.map((t) => (
               <div key={t.name} style={tierCard}>
                 <p style={testimonialText}>“{t.text}”</p>
@@ -321,6 +384,48 @@ export default function Mentoring() {
           </a>
         </div>
       </div>
+
+      {activeVideo && (
+        <div style={modalOverlay} onClick={closeModal}>
+          <div
+            className="mentor-modal-body"
+            style={modalBody}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button type="button" onClick={closeModal} style={closeButton}>
+              ×
+            </button>
+
+            <h3 style={modalTitle}>{activeVideo.title}</h3>
+
+            {activeVideo.type === "youtube" ? (
+              <iframe
+                className="mentor-video-frame"
+                width="100%"
+                height="420"
+                src={toYoutubeEmbed(activeVideo.url)}
+                title={activeVideo.title}
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                style={modalFrame}
+              />
+            ) : (
+              <video
+                className="mentor-video-player"
+                width="100%"
+                height="420"
+                src={activeVideo.url}
+                controls
+                autoPlay
+                playsInline
+                preload="metadata"
+                style={modalFrame}
+              />
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -446,7 +551,7 @@ const cardGrid = {
 
 const videoGrid = {
   display: "grid",
-  gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+  gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
   gap: 18,
   marginTop: 16,
 };
@@ -508,10 +613,67 @@ const studentName = {
   color: "#7dd3fc",
 };
 
+const videoCardButton = {
+  background: "transparent",
+  border: "none",
+  padding: 0,
+  textAlign: "left",
+  cursor: "pointer",
+};
+
+const videoCard = {
+  background: "rgba(15, 23, 42, 0.72)",
+  border: "1px solid rgba(148,163,184,0.14)",
+  borderRadius: 18,
+  padding: 18,
+  boxShadow: "0 12px 34px rgba(0,0,0,0.18)",
+  color: "#f8fafc",
+  height: "100%",
+};
+
+const videoThumb = {
+  height: 160,
+  borderRadius: 14,
+  marginBottom: 12,
+  background: "linear-gradient(135deg, rgba(56,189,248,0.20), rgba(15,23,42,0.90))",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+};
+
+const videoThumbYoutube = {
+  height: 160,
+  borderRadius: 14,
+  marginBottom: 12,
+  background: "linear-gradient(135deg, rgba(239,68,68,0.25), rgba(15,23,42,0.90))",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+};
+
+const playCircle = {
+  width: 64,
+  height: 64,
+  borderRadius: "50%",
+  background: "rgba(255,255,255,0.12)",
+  border: "1px solid rgba(255,255,255,0.20)",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  color: "#fff",
+  fontSize: 24,
+  fontWeight: 800,
+};
+
 const videoTitle = {
   marginBottom: 8,
   color: "#7dd3fc",
   fontWeight: 700,
+};
+
+const videoHint = {
+  color: "#cbd5e1",
+  fontSize: 14,
 };
 
 const badge = {
@@ -556,4 +718,52 @@ const applyButton = {
   fontWeight: 700,
   cursor: "pointer",
   marginTop: 18,
+};
+
+const modalOverlay = {
+  position: "fixed",
+  inset: 0,
+  background: "rgba(2, 6, 23, 0.82)",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  zIndex: 9999,
+  padding: 16,
+};
+
+const modalBody = {
+  width: "min(960px, 100%)",
+  background: "#020617",
+  border: "1px solid rgba(148,163,184,0.14)",
+  borderRadius: 20,
+  padding: 18,
+  boxShadow: "0 20px 60px rgba(0,0,0,0.35)",
+  position: "relative",
+};
+
+const closeButton = {
+  position: "absolute",
+  right: 12,
+  top: 12,
+  width: 38,
+  height: 38,
+  borderRadius: 999,
+  border: "none",
+  background: "rgba(255,255,255,0.10)",
+  color: "#fff",
+  fontSize: 24,
+  cursor: "pointer",
+};
+
+const modalTitle = {
+  marginTop: 0,
+  marginBottom: 14,
+  color: "#f8fafc",
+  paddingRight: 48,
+};
+
+const modalFrame = {
+  borderRadius: 14,
+  width: "100%",
+  background: "#000",
 };
