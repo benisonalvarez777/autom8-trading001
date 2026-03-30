@@ -7,16 +7,20 @@ const BROKER_LINK =
   "https://portal.fortuneprime.com/getview?view=register&token=0pCE0B";
 
 const VIDEO_LINKS = [
-  { title: "MT5 Mobile Walkthrough", url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ" },
-  { title: "MT5 Desktop Walkthrough", url: "https://www.youtube.com/watch?v=ysz5S6PUM-U" },
-  { title: "Trade Execution Guide", url: "https://www.youtube.com/watch?v=jNQXAC9IVRw" },
-  { title: "Technical Setup Examples", url: "https://www.youtube.com/watch?v=aqz-KE-bpKQ" },
+  { title: "Introduction To Forex", url: "Public/Videos/Introduction to Forex.MP4" },
+  { title: "Understanding Currency Pairs", url: "Public/Videos/The Basics of Forex and Understanding Currency Pairs.MP4" },
+  { title: "How to Open & Close Trades", url: "Public/Videos/How to Open & Close Trades.MP4" },
+  { title: "The Art of Technical Analysis", url: "Public/videos/The Art Of Technical Analysis.MP4" },
+  { title: "The Art of Fundamental Analysis", url: "Public/videos/Technical And Fundamental Analysis.MP4" },
+  { title: "Risk Management", url: "Public/Videos/Mastering Forex Trading Essential Risk Management Strategies for Every Trader.MP4" },
+  { title: "The Ultimate Trading Plan (Blueprint)", url: "Public/Videos/Master the Market The Ultimate Trading Plan Blueprint.MP4" },
+  { title: "5 Styles of Forex Trading Strategies", url: "Public/Videos/5 Styles of Forex Trading Strategies.mp4" },
 ];
 
 const BROKER_VIDEOS = [
-  { title: "How to Deposit", url: "https://www.youtube.com/watch?v=ysz5S6PUM-U" },
-  { title: "How to Withdraw", url: "https://www.youtube.com/watch?v=jNQXAC9IVRw" },
-  { title: "Who is Fortune Prime Global", url: "https://www.youtube.com/watch?v=aqz-KE-bpKQ" },
+  { title: "How to Deposit FPG", url: "https://www.youtube.com/watch?v=yMhZ-QZJ8_A" },
+  { title: "How to Deposit M4U", url: "https://www.youtube.com/watch?v=kq31M4C6ZBw" },
+  
 ];
 
 const EBOOK_LINKS = {
@@ -49,16 +53,7 @@ const lessons = [
       "Common beginner mistakes",
     ],
   },
-  {
-    title: "MT5 Walkthrough",
-    desc: "Platform mastery",
-    points: [
-      "Install MT5 mobile and desktop",
-      "Login and account setup",
-      "Charts, indicators, and tools",
-      "Market and pending orders",
-    ],
-  },
+  
   {
     title: "Technical Analysis",
     desc: "Chart-based strategy",

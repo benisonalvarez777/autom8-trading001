@@ -44,6 +44,7 @@ export default function CopyTrading() {
   const [activeProof, setActiveProof] = useState(null);
   const [showVideoModal, setShowVideoModal] = useState(false);
   const [activeVideo, setActiveVideo] = useState(null);
+  const [hoveredVideoId, setHoveredVideoId] = useState(null);
 
   const whatsappLink = useMemo(
     () =>
@@ -146,21 +147,25 @@ export default function CopyTrading() {
   const tutorialVideos = [
     {
       id: 1,
-      title: "Copy Trading Setup Walkthrough FPG",
+      title: "FPG",
       subtitle: "Main Video",
-      description: "Watch the guide before requesting access.",
+      description: "Watch the FPG copy trading guide.",
       type: "video",
       src: "/videos/copytrading.mp4",
+      previewImage: "/images/brokers/FPG-Logo.png",
       badge: "Video Tutorial",
+      note: "FPG",
     },
     {
       id: 2,
-      title: "Copy Trading M4U",
+      title: "M4U",
       subtitle: "YouTube Video",
-      description: "Watch the second copy trading video here.",
+      description: "Watch the M4U guide here.",
       type: "youtube",
       src: getYoutubeEmbedUrl("https://www.youtube.com/watch?v=0qqyK9ok-DY"),
+      previewImage: "/images/brokers/markets4you-logo.png",
       badge: "Video Tutorial",
+      note: "M4U",
     },
     {
       id: 3,
@@ -169,6 +174,7 @@ export default function CopyTrading() {
       description: "This video slot is available for sponsor placement.",
       type: "sponsor",
       badge: "Sponsor Slot",
+      note: "Available",
     },
     {
       id: 4,
@@ -177,6 +183,7 @@ export default function CopyTrading() {
       description: "This video slot is available for sponsor placement.",
       type: "sponsor",
       badge: "Sponsor Slot",
+      note: "Available",
     },
     {
       id: 5,
@@ -185,6 +192,7 @@ export default function CopyTrading() {
       description: "This video slot is available for sponsor placement.",
       type: "sponsor",
       badge: "Sponsor Slot",
+      note: "Available",
     },
   ];
 
@@ -237,8 +245,22 @@ export default function CopyTrading() {
 
         @keyframes playPulse {
           0% { transform: scale(1); box-shadow: 0 0 0 rgba(56,189,248,0); }
-          50% { transform: scale(1.04); box-shadow: 0 0 22px rgba(56,189,248,0.22); }
+          50% { transform: scale(1.05); box-shadow: 0 0 22px rgba(56,189,248,0.26); }
           100% { transform: scale(1); box-shadow: 0 0 0 rgba(56,189,248,0); }
+        }
+
+        @keyframes watchGlow {
+          0% { box-shadow: 0 0 0 rgba(56,189,248,0); }
+          50% { box-shadow: 0 0 26px rgba(56,189,248,0.18); }
+          100% { box-shadow: 0 0 0 rgba(56,189,248,0); }
+        }
+
+        .copy-video-card:hover .copy-watch-pill {
+          transform: translateY(-2px) scale(1.03);
+        }
+
+        .copy-video-card:hover .copy-preview-zoom {
+          transform: scale(1.04);
         }
 
         @media (max-width: 1100px) {
@@ -326,7 +348,7 @@ export default function CopyTrading() {
           }
 
           .copy-video-frame {
-            height: 180px !important;
+            height: 220px !important;
           }
 
           .copy-video-preview {
@@ -527,6 +549,9 @@ export default function CopyTrading() {
                 key={item.id}
                 type="button"
                 onClick={() => openVideo(item)}
+                onMouseEnter={() => setHoveredVideoId(item.id)}
+                onMouseLeave={() => setHoveredVideoId(null)}
+                className="copy-video-card"
                 style={{
                   ...tutorialCardButton,
                   cursor:
@@ -538,29 +563,54 @@ export default function CopyTrading() {
                 <div style={tutorialCard}>
                   {item.type === "video" ? (
                     <div className="copy-video-preview" style={videoPreviewWrapSmall}>
-                      <video
-                        src={item.src}
-                        muted
-                        playsInline
-                        preload="metadata"
-                        style={videoPreview}
+                      <div
+                        className="copy-preview-zoom"
+                        style={{
+                          ...imagePreviewBox,
+                          backgroundImage: `url("${item.previewImage}")`,
+                          transform:
+                            hoveredVideoId === item.id ? "scale(1.04)" : "scale(1)",
+                          transition: "transform 0.35s ease",
+                        }}
                       />
                       <div style={videoPreviewOverlay}></div>
+
+                      <div style={videoTopBadges}>
+                        <div style={videoPreviewBadge}>{item.badge}</div>
+                        <div style={slotNote}>{item.note}</div>
+                      </div>
+
                       <div style={videoPreviewContentSmall}>
                         <div style={videoPreviewPlaySmall}>▶</div>
-                        <div style={videoPreviewBadge}>{item.badge}</div>
+                        <div className="copy-watch-pill" style={watchNowPill}>
+                          WATCH NOW
+                        </div>
                       </div>
                     </div>
                   ) : item.type === "youtube" ? (
                     <div className="copy-video-preview" style={videoPreviewWrapSmall}>
-                      <div style={youtubePreviewBox}>
-                        <div style={youtubePreviewIcon}>▶</div>
-                        <div style={youtubePreviewText}>YouTube Preview</div>
-                      </div>
+                      <div
+                        className="copy-preview-zoom"
+                        style={{
+                          ...imagePreviewBox,
+                          backgroundImage: `url("${item.previewImage}")`,
+                          transform:
+                            hoveredVideoId === item.id ? "scale(1.04)" : "scale(1)",
+                          transition: "transform 0.35s ease",
+                        }}
+                      />
                       <div style={videoPreviewOverlay}></div>
+
+                      <div style={videoTopBadges}>
+                        <div style={videoPreviewBadge}>{item.badge}</div>
+                        <div style={slotNote}>{item.note}</div>
+                      </div>
+
                       <div style={videoPreviewContentSmall}>
                         <div style={videoPreviewPlaySmall}>▶</div>
-                        <div style={videoPreviewBadge}>{item.badge}</div>
+                        <div className="copy-watch-pill" style={watchNowPill}>
+                          WATCH NOW
+                        </div>
                       </div>
                     </div>
                   ) : (
@@ -568,6 +618,7 @@ export default function CopyTrading() {
                       <div style={sponsorBadge}>{item.badge}</div>
                       <div style={sponsorIcon}>🎥</div>
                       <div style={sponsorTitleSmall}>{item.subtitle}</div>
+                      <div style={slotNoteSponsor}>{item.note}</div>
                     </div>
                   )}
 
@@ -777,7 +828,7 @@ export default function CopyTrading() {
                 style={{
                   ...videoFrame,
                   width: "100%",
-                  height: "180px",
+                  height: "260px",
                   border: "none",
                 }}
               />
@@ -788,10 +839,11 @@ export default function CopyTrading() {
                 controls
                 playsInline
                 preload="metadata"
+                autoPlay
                 style={{
                   ...videoFrame,
                   width: "100%",
-                  height: "180px",
+                  height: "260px",
                   objectFit: "cover",
                 }}
               />
@@ -1128,23 +1180,26 @@ const tutorialCard = {
 
 const videoPreviewWrapSmall = {
   position: "relative",
-  minHeight: 180,
+  minHeight: 210,
   borderBottom: "1px solid rgba(148,163,184,0.14)",
   overflow: "hidden",
+  background: "rgba(2,6,23,0.45)",
 };
 
-const videoPreview = {
+const imagePreviewBox = {
   width: "100%",
   height: "100%",
-  objectFit: "cover",
-  display: "block",
+  minHeight: 210,
+  backgroundPosition: "center",
+  backgroundRepeat: "no-repeat",
+  backgroundSize: "cover",
 };
 
 const videoPreviewOverlay = {
   position: "absolute",
   inset: 0,
   background:
-    "linear-gradient(180deg, rgba(2,6,23,0.20) 0%, rgba(2,6,23,0.45) 50%, rgba(2,6,23,0.82) 100%)",
+    "linear-gradient(180deg, rgba(2,6,23,0.12) 0%, rgba(2,6,23,0.38) 45%, rgba(2,6,23,0.88) 100%)",
 };
 
 const videoPreviewContentSmall = {
@@ -1158,8 +1213,8 @@ const videoPreviewContentSmall = {
 };
 
 const videoPreviewPlaySmall = {
-  width: 54,
-  height: 54,
+  width: 60,
+  height: 60,
   borderRadius: "999px",
   display: "flex",
   alignItems: "center",
@@ -1167,11 +1222,39 @@ const videoPreviewPlaySmall = {
   background: "rgba(56,189,248,0.16)",
   border: "1px solid rgba(56,189,248,0.30)",
   color: "#ffffff",
-  fontSize: 22,
+  fontSize: 24,
   fontWeight: 900,
   marginBottom: 12,
   animation: "playPulse 2.4s infinite",
   backdropFilter: "blur(6px)",
+};
+
+const watchNowPill = {
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
+  padding: "8px 16px",
+  borderRadius: 999,
+  background: "rgba(56,189,248,0.16)",
+  color: "#ffffff",
+  border: "1px solid rgba(56,189,248,0.28)",
+  fontWeight: 900,
+  fontSize: 12,
+  letterSpacing: "0.08em",
+  animation: "watchGlow 2.6s infinite",
+  transition: "transform 0.25s ease",
+};
+
+const videoTopBadges = {
+  position: "absolute",
+  top: 12,
+  left: 12,
+  right: 12,
+  display: "flex",
+  justifyContent: "space-between",
+  gap: 8,
+  alignItems: "center",
+  flexWrap: "wrap",
 };
 
 const videoPreviewBadge = {
@@ -1180,39 +1263,28 @@ const videoPreviewBadge = {
   justifyContent: "center",
   padding: "6px 12px",
   borderRadius: 999,
-  background: "rgba(15,23,42,0.70)",
+  background: "rgba(15,23,42,0.74)",
   border: "1px solid rgba(148,163,184,0.16)",
   color: "#7dd3fc",
   fontWeight: 800,
   fontSize: 12,
 };
 
-const youtubePreviewBox = {
-  width: "100%",
-  height: "100%",
-  minHeight: 180,
-  display: "flex",
-  flexDirection: "column",
+const slotNote = {
+  display: "inline-flex",
   alignItems: "center",
   justifyContent: "center",
-  background:
-    "linear-gradient(135deg, rgba(220,38,38,0.88), rgba(15,23,42,0.96))",
-  color: "#fff",
-};
-
-const youtubePreviewIcon = {
-  fontSize: 40,
-  fontWeight: 900,
-  marginBottom: 10,
-};
-
-const youtubePreviewText = {
-  fontWeight: 800,
-  fontSize: 18,
+  padding: "6px 12px",
+  borderRadius: 999,
+  background: "rgba(2,6,23,0.55)",
+  border: "1px solid rgba(148,163,184,0.14)",
+  color: "#f8fafc",
+  fontWeight: 700,
+  fontSize: 11,
 };
 
 const sponsorCardPreview = {
-  minHeight: 180,
+  minHeight: 210,
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
@@ -1247,6 +1319,18 @@ const sponsorTitleSmall = {
   color: "#cbd5e1",
   fontWeight: 800,
   fontSize: 14,
+};
+
+const slotNoteSponsor = {
+  marginTop: 10,
+  display: "inline-flex",
+  padding: "6px 12px",
+  borderRadius: 999,
+  background: "rgba(2,6,23,0.55)",
+  border: "1px solid rgba(148,163,184,0.14)",
+  color: "#f8fafc",
+  fontWeight: 700,
+  fontSize: 11,
 };
 
 const tutorialTextWrap = {
@@ -1581,7 +1665,7 @@ const modalContent = {
 
 const videoModalContent = {
   position: "relative",
-  width: "min(700px, 100%)",
+  width: "min(760px, 100%)",
   background: "#020617",
   borderRadius: 16,
   padding: 14,
@@ -1622,3 +1706,4 @@ const videoFrame = {
   overflow: "hidden",
   background: "#000",
 };
+

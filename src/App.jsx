@@ -1359,3 +1359,4 @@ const stickyLimitedWrap = {
   background: "linear-gradient(135deg, #facc15, #f97316)",
   whiteSpace: "nowrap",
 };
+
