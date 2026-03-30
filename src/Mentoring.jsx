@@ -7,14 +7,14 @@ const BROKER_LINK =
   "https://portal.fortuneprime.com/getview?view=register&token=0pCE0B";
 
 const VIDEO_LINKS = [
-  { title: "Introduction To Forex", url: "Public/Videos/Introduction to Forex.MP4" },
-  { title: "Understanding Currency Pairs", url: "Public/Videos/The Basics of Forex and Understanding Currency Pairs.MP4" },
-  { title: "How to Open & Close Trades", url: "Public/Videos/How to Open & Close Trades.MP4" },
-  { title: "The Art of Technical Analysis", url: "Public/videos/The Art Of Technical Analysis.MP4" },
-  { title: "The Art of Fundamental Analysis", url: "Public/videos/Technical And Fundamental Analysis.MP4" },
-  { title: "Risk Management", url: "Public/Videos/Mastering Forex Trading Essential Risk Management Strategies for Every Trader.MP4" },
-  { title: "The Ultimate Trading Plan (Blueprint)", url: "Public/Videos/Master the Market The Ultimate Trading Plan Blueprint.MP4" },
-  { title: "5 Styles of Forex Trading Strategies", url: "Public/Videos/5 Styles of Forex Trading Strategies.mp4" },
+  { title: "Introduction To Forex", url: "/videos/Introduction to Forex.MP4" },
+  { title: "Understanding Currency Pairs", url: "/videos/The Basics of Forex and Understanding Currency Pairs.MP4" },
+  { title: "How to Open & Close Trades", url: "/videos/How to Open & Close Trades.MP4" },
+  { title: "The Art of Technical Analysis", url: "/videos/The Art Of Technical Analysis.MP4" },
+  { title: "The Art of Fundamental Analysis", url: "/videos/Technical And Fundamental Analysis.MP4" },
+  { title: "Risk Management", url: "/videos/Mastering Forex Trading Essential Risk Management Strategies for Every Trader.MP4" },
+  { title: "The Ultimate Trading Plan (Blueprint)", url: "/videos/Master the Market The Ultimate Trading Plan Blueprint.MP4" },
+  { title: "5 Styles of Forex Trading Strategies", url: "/videos/5 Styles of Forex Trading Strategies.mp4" },
 ];
 
 const BROKER_VIDEOS = [
