@@ -175,12 +175,22 @@ export default function BuyEAProduct() {
           100% { box-shadow: 0 0 0 rgba(37, 211, 102, 0); }
         }
 
-        @media (max-width: 900px) {
+        @keyframes pulseUrgency {
+          0% { box-shadow: 0 0 0 rgba(248,113,113,0); }
+          50% { box-shadow: 0 0 20px rgba(248,113,113,0.16); }
+          100% { box-shadow: 0 0 0 rgba(248,113,113,0); }
+        }
+
+        @media (max-width: 1024px) {
           .buy-product-grid {
             grid-template-columns: 1fr !important;
           }
 
           .buy-product-proof-grid {
+            grid-template-columns: 1fr !important;
+          }
+
+          .buy-product-bottom-grid {
             grid-template-columns: 1fr !important;
           }
 
@@ -213,6 +223,29 @@ export default function BuyEAProduct() {
 
           .buy-product-sticky-button {
             width: 100% !important;
+          }
+
+          .buy-product-cta-group,
+          .buy-product-top-actions {
+            flex-direction: column !important;
+          }
+
+          .buy-product-cta-group a,
+          .buy-product-top-actions a,
+          .buy-product-top-actions button {
+            width: 100% !important;
+          }
+
+          .buy-product-main-title {
+            font-size: 30px !important;
+          }
+
+          .buy-product-trust-grid {
+            grid-template-columns: 1fr 1fr !important;
+          }
+
+          .buy-product-compare-grid {
+            grid-template-columns: 1fr !important;
           }
         }
       `}</style>
@@ -265,10 +298,11 @@ export default function BuyEAProduct() {
               <h3 style={{ marginTop: 0, marginBottom: 12 }}>
                 📊 Real Backtest Preview
               </h3>
+
               <div style={videoWrap}>
                 <iframe
                   width="100%"
-                  height="280"
+                  height="300"
                   src={embeddedVideo}
                   title={product.title}
                   frameBorder="0"
@@ -300,10 +334,12 @@ export default function BuyEAProduct() {
             <div style={glassCard}>
               <div style={pill}>Selected EA Product</div>
 
-              <h1 style={mainTitle}>{product.title}</h1>
+              <h1 className="buy-product-main-title" style={mainTitle}>
+                {product.title}
+              </h1>
 
-              <div style={{ marginBottom: 12 }}>
-                <span style={{ fontSize: 30, fontWeight: 900 }}>{product.price}</span>
+              <div style={priceBlock}>
+                <span style={priceText}>{product.price}</span>
               </div>
 
               <div style={accessLabel}>{product.accessLabel}</div>
@@ -318,11 +354,12 @@ export default function BuyEAProduct() {
                 manage trades more efficiently.
               </p>
 
-              <div style={{ color: "#7dd3fc", fontWeight: 700, marginTop: 14 }}>
-                {product.bestFor}
+              <div style={bestForBox}>
+                <div style={bestForLabel}>Best for</div>
+                <div style={bestForText}>{product.bestFor}</div>
               </div>
 
-              <div style={trustGrid}>
+              <div className="buy-product-trust-grid" style={trustGrid}>
                 <div style={trustBox}>Instant delivery</div>
                 <div style={trustBox}>Beginner friendly</div>
                 <div style={trustBox}>Support included</div>
@@ -341,32 +378,7 @@ export default function BuyEAProduct() {
                 </div>
               </div>
 
-              <h3 style={sectionTitle}>Why Buy This EA</h3>
-              <p style={bodyText}>{product.proof}</p>
-              <p style={{ color: "#facc15", marginTop: 10, lineHeight: 1.7 }}>
-                Many traders choose this EA to simplify decision-making and reduce
-                emotional mistakes during live market conditions.
-              </p>
-
-              <h3 style={sectionTitle}>Included Features</h3>
-              <div style={{ display: "grid", gap: 10 }}>
-                {product.features.map((feature) => (
-                  <div key={feature} style={featureRow}>
-                    ✔ {feature}
-                  </div>
-                ))}
-              </div>
-
-              <h3 style={sectionTitle}>What You Get</h3>
-              <div style={whatYouGetBox}>
-                <div>✔ Full EA access</div>
-                <div>✔ Instant delivery after payment</div>
-                <div>✔ Easy setup guidance</div>
-                <div>✔ Lifetime access</div>
-                <div>✔ Support included</div>
-              </div>
-
-              <div style={ctaGroup}>
+              <div style={topActionWrap} className="buy-product-top-actions">
                 <a
                   href={telegramLink}
                   target="_blank"
@@ -391,15 +403,46 @@ export default function BuyEAProduct() {
                   Copy USDT Wallet
                 </button>
               </div>
+
+              <div style={walletHintBox}>
+                Payment and setup guidance are handled privately after you message us.
+              </div>
             </div>
           </div>
         </div>
 
-        <div style={bottomGrid}>
+        <div className="buy-product-bottom-grid" style={bottomGrid}>
+          <div style={glassCard}>
+            <h2 style={{ marginTop: 0 }}>Why Buy This EA</h2>
+            <p style={bodyText}>{product.proof}</p>
+            <p style={highlightParagraph}>
+              Many traders choose this EA to simplify decision-making, reduce
+              emotional mistakes, and follow a more consistent execution process.
+            </p>
+
+            <h3 style={sectionTitle}>Included Features</h3>
+            <div style={{ display: "grid", gap: 10 }}>
+              {product.features.map((feature) => (
+                <div key={feature} style={featureRow}>
+                  ✔ {feature}
+                </div>
+              ))}
+            </div>
+
+            <h3 style={sectionTitle}>What You Get</h3>
+            <div style={whatYouGetBox}>
+              <div style={getRow}>✔ Full EA access</div>
+              <div style={getRow}>✔ Instant delivery after payment</div>
+              <div style={getRow}>✔ Easy setup guidance</div>
+              <div style={getRow}>✔ Lifetime access</div>
+              <div style={getRow}>✔ Support included</div>
+            </div>
+          </div>
+
           <div style={glassCard}>
             <h2 style={{ marginTop: 0 }}>Manual Trading vs Using This EA</h2>
 
-            <div style={compareGrid}>
+            <div className="buy-product-compare-grid" style={compareGrid}>
               <div style={compareBoxBad}>
                 <h4 style={compareTitle}>Manual Trading</h4>
                 <div style={compareItem}>✖ Emotional entries</div>
@@ -416,10 +459,8 @@ export default function BuyEAProduct() {
                 <div style={compareItem}>✔ More convenient workflow</div>
               </div>
             </div>
-          </div>
 
-          <div style={glassCard}>
-            <h2 style={{ marginTop: 0 }}>Trader Feedback</h2>
+            <h2 style={{ marginTop: 26 }}>Trader Feedback</h2>
 
             {testimonials.map((item, index) => (
               <div key={index} style={testimonialCard}>
@@ -470,6 +511,26 @@ export default function BuyEAProduct() {
             Trading involves risk. Backtest results and past performance do not
             guarantee future results.
           </div>
+
+          <div className="buy-product-cta-group" style={ctaGroup}>
+            <a
+              href={telegramLink}
+              target="_blank"
+              rel="noreferrer"
+              style={{ textDecoration: "none", flex: 1 }}
+            >
+              <button style={buyButton}>Unlock via Telegram</button>
+            </a>
+
+            <a
+              href={whatsappLink}
+              target="_blank"
+              rel="noreferrer"
+              style={{ textDecoration: "none", flex: 1 }}
+            >
+              <button style={whatsappButton}>Unlock via WhatsApp</button>
+            </a>
+          </div>
         </div>
       </div>
 
@@ -493,7 +554,7 @@ export default function BuyEAProduct() {
         <div className="buy-product-sticky-inner" style={stickyInner}>
           <div style={stickyPill}>🔥 Ready to unlock {product.title}?</div>
 
-          <div style={{ display: "flex", gap: 10, flexWrap: "wrap", justifyContent: "flex-end" }}>
+          <div style={stickyButtonsWrap}>
             <a href={telegramLink} target="_blank" rel="noreferrer">
               <button className="buy-product-sticky-button" style={buyButton}>
                 Telegram
@@ -667,6 +728,15 @@ const mainTitle = {
   fontWeight: 900,
 };
 
+const priceBlock = {
+  marginBottom: 12,
+};
+
+const priceText = {
+  fontSize: 30,
+  fontWeight: 900,
+};
+
 const accessLabel = {
   color: "#94a3b8",
   fontWeight: 700,
@@ -695,12 +765,34 @@ const stockText = {
   fontWeight: 900,
   fontSize: 13,
   marginBottom: 14,
+  animation: "pulseUrgency 2.1s infinite",
 };
 
 const mainDesc = {
   color: "#cbd5e1",
   lineHeight: 1.8,
   marginBottom: 16,
+};
+
+const bestForBox = {
+  marginTop: 14,
+  marginBottom: 16,
+  background: "rgba(2,6,23,0.42)",
+  border: "1px solid rgba(148,163,184,0.14)",
+  borderRadius: 16,
+  padding: 14,
+};
+
+const bestForLabel = {
+  color: "#94a3b8",
+  fontSize: 13,
+  fontWeight: 700,
+  marginBottom: 6,
+};
+
+const bestForText = {
+  color: "#7dd3fc",
+  fontWeight: 800,
 };
 
 const trustGrid = {
@@ -740,6 +832,31 @@ const salesTrustList = {
   lineHeight: 1.8,
 };
 
+const topActionWrap = {
+  display: "flex",
+  gap: 10,
+  flexWrap: "wrap",
+  marginTop: 18,
+};
+
+const walletHintBox = {
+  marginTop: 14,
+  background: "rgba(56,189,248,0.08)",
+  border: "1px solid rgba(56,189,248,0.16)",
+  borderRadius: 14,
+  padding: 12,
+  color: "#cbd5e1",
+  lineHeight: 1.7,
+  fontSize: 14,
+};
+
+const bottomGrid = {
+  display: "grid",
+  gridTemplateColumns: "1.1fr 0.9fr",
+  gap: 16,
+  marginBottom: 24,
+};
+
 const sectionTitle = {
   marginTop: 22,
   marginBottom: 12,
@@ -750,6 +867,12 @@ const bodyText = {
   color: "#cbd5e1",
   lineHeight: 1.8,
   marginTop: 0,
+};
+
+const highlightParagraph = {
+  color: "#facc15",
+  marginTop: 12,
+  lineHeight: 1.8,
 };
 
 const featureRow = {
@@ -772,47 +895,8 @@ const whatYouGetBox = {
   fontWeight: 700,
 };
 
-const ctaGroup = {
-  display: "flex",
-  gap: 10,
-  flexWrap: "wrap",
-  marginTop: 18,
-};
-
-const baseButton = {
-  width: "100%",
-  border: "none",
-  borderRadius: 14,
-  padding: "14px 18px",
-  fontWeight: 800,
-  fontSize: 15,
-  cursor: "pointer",
-};
-
-const buyButton = {
-  ...baseButton,
-  background: "linear-gradient(135deg, #0ea5e9, #2563eb)",
-  color: "#ffffff",
-};
-
-const whatsappButton = {
-  ...baseButton,
-  background: "#25D366",
-  color: "#052e16",
-};
-
-const secondaryButton = {
-  ...baseButton,
-  background: "rgba(15,23,42,0.9)",
-  color: "#f8fafc",
-  border: "1px solid rgba(148,163,184,0.18)",
-};
-
-const bottomGrid = {
-  display: "grid",
-  gridTemplateColumns: "1.1fr 0.9fr",
-  gap: 16,
-  marginBottom: 24,
+const getRow = {
+  lineHeight: 1.6,
 };
 
 const compareGrid = {
@@ -875,6 +959,42 @@ const riskNote = {
   lineHeight: 1.7,
 };
 
+const ctaGroup = {
+  display: "flex",
+  gap: 10,
+  flexWrap: "wrap",
+  marginTop: 18,
+};
+
+const baseButton = {
+  width: "100%",
+  border: "none",
+  borderRadius: 14,
+  padding: "14px 18px",
+  fontWeight: 800,
+  fontSize: 15,
+  cursor: "pointer",
+};
+
+const buyButton = {
+  ...baseButton,
+  background: "linear-gradient(135deg, #0ea5e9, #2563eb)",
+  color: "#ffffff",
+};
+
+const whatsappButton = {
+  ...baseButton,
+  background: "#25D366",
+  color: "#052e16",
+};
+
+const secondaryButton = {
+  ...baseButton,
+  background: "rgba(15,23,42,0.9)",
+  color: "#f8fafc",
+  border: "1px solid rgba(148,163,184,0.18)",
+};
+
 const popupStyle = {
   position: "fixed",
   right: 20,
@@ -935,3 +1055,9 @@ const stickyPill = {
   fontWeight: 800,
 };
 
+const stickyButtonsWrap = {
+  display: "flex",
+  gap: 10,
+  flexWrap: "wrap",
+  justifyContent: "flex-end",
+};
