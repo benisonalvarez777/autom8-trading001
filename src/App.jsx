@@ -8,6 +8,7 @@ const PARTNER_LINK =
 const CONTACT_EMAIL = "rich@automateforextrading.com";
 const USDT_WALLET = "0xbb2a9a6daf3be07e7dbf211e26c8295121767543";
 const BRAND_LOGO = "/images/autom8-logo.png";
+const TELEGRAM_MEMBERS = "3051+";
 
 const services = [
   {
@@ -87,7 +88,7 @@ const partnerBrokerOptions = [
   },
 ];
 
-const stats = [
+const chartStats = [
   { label: "Win Rate", value: "95%" },
   { label: "Clients", value: "500+" },
   { label: "Support", value: "24/7" },
@@ -353,6 +354,18 @@ export default function App() {
           100% { transform: translateY(0px); }
         }
 
+        @keyframes glowPulseBlue {
+          0% { box-shadow: 0 0 0 rgba(56,189,248,0); }
+          50% { box-shadow: 0 0 28px rgba(56,189,248,0.16); }
+          100% { box-shadow: 0 0 0 rgba(56,189,248,0); }
+        }
+
+        @keyframes glowPulseGreen {
+          0% { box-shadow: 0 0 0 rgba(34,197,94,0); }
+          50% { box-shadow: 0 0 28px rgba(34,197,94,0.18); }
+          100% { box-shadow: 0 0 0 rgba(34,197,94,0); }
+        }
+
         .hover-lift {
           transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
         }
@@ -384,6 +397,14 @@ export default function App() {
           height: 240px;
           background: radial-gradient(circle, rgba(56,189,248,0.16), transparent 70%);
           pointer-events: none;
+        }
+
+        .chart-highlight-members {
+          animation: glowPulseBlue 2.8s infinite;
+        }
+
+        .chart-highlight-profit {
+          animation: glowPulseGreen 2.8s infinite;
         }
 
         @media (max-width: 1200px) {
@@ -491,6 +512,15 @@ export default function App() {
 
           .gold-chart-frame {
             height: 300px !important;
+          }
+
+          .chart-side-stack {
+            gap: 10px !important;
+          }
+
+          .chart-highlight-row {
+            grid-template-columns: 1fr !important;
+            gap: 10px !important;
           }
 
           .gold-chart-stats-grid {
@@ -637,11 +667,6 @@ export default function App() {
 
             <div className="metric-wrap" style={metricWrap}>
               <div className="metric-card" style={metricCard}>
-                <div style={metricLabel}>Live Profit</div>
-                <div style={metricValue}>${profit}+</div>
-              </div>
-
-              <div className="metric-card" style={metricCard}>
                 <div style={metricLabel}>Contact</div>
                 <div style={metricContact}>{CONTACT_EMAIL}</div>
               </div>
@@ -698,21 +723,37 @@ export default function App() {
               />
             </div>
 
-            <p style={chartNote}>
-              Monitor gold in real time while exploring our automation products.
-            </p>
-
-            <div className="gold-chart-stats-grid" style={chartStatsGrid}>
-              {stats.map((item) => (
-                <div key={item.label} className="gold-chart-stat-card" style={chartStatCard}>
-                  <div className="gold-chart-stat-value" style={chartStatValue}>
-                    {item.value}
-                  </div>
-                  <div className="gold-chart-stat-label" style={chartStatLabel}>
-                    {item.label}
-                  </div>
+            <div className="chart-side-stack" style={chartSideStack}>
+              <div className="chart-highlight-row" style={chartHighlightRow}>
+                <div style={chartMemberCard} className="chart-highlight-members">
+                  <div style={chartHighlightLabel}>Telegram Members</div>
+                  <div style={chartMemberValue}>{TELEGRAM_MEMBERS}</div>
                 </div>
-              ))}
+
+                <div style={chartProfitCard} className="chart-highlight-profit">
+                  <div style={chartHighlightLabel}>Live Profit</div>
+                  <div style={chartProfitValue}>${profit}+</div>
+                </div>
+              </div>
+
+              <div>
+                <p style={chartNote}>
+                  Monitor gold in real time while exploring our automation products.
+                </p>
+
+                <div className="gold-chart-stats-grid" style={chartStatsGrid}>
+                  {chartStats.map((item) => (
+                    <div key={item.label} className="gold-chart-stat-card" style={chartStatCard}>
+                      <div className="gold-chart-stat-value" style={chartStatValue}>
+                        {item.value}
+                      </div>
+                      <div className="gold-chart-stat-label" style={chartStatLabel}>
+                        {item.label}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -1236,12 +1277,6 @@ const metricLabel = {
   color: "#94a3b8",
 };
 
-const metricValue = {
-  fontSize: 30,
-  fontWeight: 800,
-  color: "#22c55e",
-};
-
 const metricContact = {
   fontSize: 16,
   fontWeight: 700,
@@ -1304,8 +1339,60 @@ const chartWrap = {
   border: "1px solid rgba(148,163,184,0.15)",
 };
 
+const chartSideStack = {
+  display: "flex",
+  flexDirection: "column",
+  gap: 14,
+  marginTop: 14,
+};
+
+const chartHighlightRow = {
+  display: "grid",
+  gridTemplateColumns: "1fr 1fr",
+  gap: 12,
+};
+
+const chartMemberCard = {
+  background:
+    "linear-gradient(135deg, rgba(56,189,248,0.18), rgba(37,99,235,0.10))",
+  border: "1px solid rgba(56,189,248,0.24)",
+  borderRadius: 16,
+  padding: "14px 16px",
+};
+
+const chartProfitCard = {
+  background:
+    "linear-gradient(135deg, rgba(34,197,94,0.16), rgba(56,189,248,0.08))",
+  border: "1px solid rgba(34,197,94,0.22)",
+  borderRadius: 16,
+  padding: "14px 16px",
+};
+
+const chartHighlightLabel = {
+  fontSize: 13,
+  color: "#cbd5e1",
+  marginBottom: 4,
+  fontWeight: 700,
+};
+
+const chartMemberValue = {
+  fontSize: 30,
+  fontWeight: 900,
+  color: "#38bdf8",
+  lineHeight: 1.1,
+  textShadow: "0 0 18px rgba(56,189,248,0.16)",
+};
+
+const chartProfitValue = {
+  fontSize: 30,
+  fontWeight: 900,
+  color: "#22c55e",
+  lineHeight: 1.1,
+  textShadow: "0 0 18px rgba(34,197,94,0.16)",
+};
+
 const chartNote = {
-  margin: "12px 0 0 0",
+  margin: "0 0 10px 0",
   color: "#94a3b8",
   fontSize: 14,
 };
@@ -1314,7 +1401,6 @@ const chartStatsGrid = {
   display: "grid",
   gridTemplateColumns: "1fr 1fr",
   gap: 12,
-  marginTop: 16,
 };
 
 const chartStatCard = {
